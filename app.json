@@ -1,41 +1,64 @@
 {
   "expo": {
-    "name": "radionativa",
-    "slug": "radionativa",
-    "version": "1.0.0",
+    "name": "Nativa OnStreaming",
+    "slug": "radio-nativa-onstreaming",
+    "version": "1.0.1",
+    "runtimeVersion": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "icon": "./assets/images/adaptive-icon.png",
+    "scheme": "nativaonstreaming",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.belmontprogramador.radionativaonstreaming",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Este aplicativo precisa acessar a câmera para recursos de gravação.",
+        "NSMicrophoneUsageDescription": "Este aplicativo precisa acessar o microfone para gravar áudio.",
+        "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para melhorar a experiência do usuário.",
+        "UIBackgroundModes": ["audio", "fetch", "remote-notification"]
+      }
     },
     "android": {
+      "versionCode": 2,
+      "permissions": [
+        "INTERNET",
+        "WAKE_LOCK",
+        "RECORD_AUDIO",
+        "FOREGROUND_SERVICE",
+         "POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#fd9200"
+      },
+      "package": "com.belmontprogramador.radionativaonstreaming",
+      "useNextNotificationsApi": true
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/adaptive-icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#fd9200"
         }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true
-    }
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "95cb1a41-3f9a-41ad-af85-9051c3d03bc0"
+      }
+    },
+    "owner": "nativaonstreaming"
   }
 }
