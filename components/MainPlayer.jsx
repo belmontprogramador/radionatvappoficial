@@ -18,7 +18,8 @@ const MainPlayer = () => {
     <View style={styles.container}>
       <AudioPlayer
         streamUrl={currentGenre.streamUrl}
-        trackInfo={{ title: currentGenre.title }}
+        wsUrl={currentGenre.wsUrl}
+        apiUrl={currentGenre.apiUrl}
       />
     </View>
   );

@@ -35,15 +35,17 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
         console.error("Erro ao configurar áudio:", err.message);
       }
     };
-
+  
     configureAudio();
-
+  
     return () => {
       if (sound) {
-        sound.unloadAsync();
+        sound.stopAsync(); // Para o áudio atual
+        sound.unloadAsync(); // Descarta o áudio carregado
       }
     };
   }, [streamUrl]);
+  
 
   const loadAudio = async (url) => {
     try {
@@ -139,8 +141,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 16,    
   },
   subtitle: {
     color: "#ccc",

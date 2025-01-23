@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   banner: {
     width: width * 0.95, // Ocupa 95% da largura da tela
-    height: 150, // Altura ajustada para um formato mais retangular
+    height: 120, // Altura ajustada para um formato mais retangular
     borderRadius: 10, // Borda arredondada para suavizar
     overflow: "hidden", // Garante que o conteúdo da imagem não ultrapasse os limites
     marginVertical: 2, // Espaçamento vertical para encaixar melhor com o layout acima e abaixo

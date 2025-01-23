@@ -55,6 +55,7 @@ export const GenreProvider = ({ children }) => {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+    
         if (data.spotifyTrackInfo) {
           const { artist, title, albumCover } = data.spotifyTrackInfo;
           setCurrentGenre((prev) => ({
@@ -63,14 +64,21 @@ export const GenreProvider = ({ children }) => {
               artist: artist || "Desconhecido",
               track: title || "Desconhecido",
             },
-            albumCover: albumCover || null,
+            albumCover: albumCover || prev.albumCover,
           }));
+        } else if (data.message) {
+          // Apenas loga a mensagem genérica
+          console.log("Mensagem do WebSocket:", data.message);
+        } else {
+          console.error("Dados do WebSocket inválidos:", data);
         }
       } catch (error) {
-        console.error("Erro ao processar mensagem do WebSocket:", error);
+        console.error("Erro ao processar mensagem do WebSocket:", error.message);
         setError("Erro ao processar dados do WebSocket.");
       }
     };
+    
+    
 
     socket.onerror = (error) => {
       console.error("Erro no WebSocket:", error.message);
@@ -87,8 +95,10 @@ export const GenreProvider = ({ children }) => {
   return (
     <GenreContext.Provider value={{ currentGenre, setCurrentGenre }}>
       {children}
-      {typeof error === "string" && error.length > 0 && (
-        <Text style={styles.errorText}>{error}</Text>
+      {error && (
+        <Text style={styles.errorText}>
+          {typeof error === "string" ? error : "Ocorreu um erro inesperado."}
+        </Text>
       )}
     </GenreContext.Provider>
   );

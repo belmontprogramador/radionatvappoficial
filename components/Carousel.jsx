@@ -45,17 +45,13 @@ const radios = [
 ];
 
 export default function Carousel() {
-  const { setCurrentGenre } = useGenre();
+  const { setCurrentGenre, currentGenre } = useGenre();
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        if (
-          typeof item.title === "string" &&
-          typeof item.streamUrl === "string" &&
-          typeof item.wsUrl === "string" &&
-          typeof item.apiUrl === "string"
-        ) {
+        // Verifica se o gênero selecionado é diferente do atual
+        if (currentGenre.id !== item.id) {
           setCurrentGenre({
             id: item.id,
             streamUrl: item.streamUrl,
@@ -68,7 +64,7 @@ export default function Carousel() {
             },
           });
         } else {
-          console.error("Dados inválidos ao selecionar a rádio:", item);
+          console.log(`Gênero já selecionado: ${item.title}`);
         }
       }}
       style={styles.card}
@@ -76,6 +72,7 @@ export default function Carousel() {
       <Image source={item.source} style={styles.image} resizeMode="contain" />
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>

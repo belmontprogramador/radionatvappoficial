@@ -8,7 +8,7 @@ const useTrackInfo = ({ wsUrl, apiUrl }) => {
   });
   const [error, setError] = useState(null);
 
-  // Função para buscar informações da música via HTTPS
+  // Função para buscar informações da música via API
   const fetchCurrentTrack = async () => {
     try {
       const response = await fetch(apiUrl);
@@ -24,6 +24,12 @@ const useTrackInfo = ({ wsUrl, apiUrl }) => {
           track: title || "Desconhecido",
           albumCover: albumCover || null,
         });
+      } else if (data.streamInfo) {
+        // Fallback para streamInfo, caso spotifyTrackInfo não exista
+        setTrackInfo((prev) => ({
+          ...prev,
+          track: data.streamInfo.title || prev.track,
+        }));
       } else {
         console.error("Resposta da API inválida:", data);
         setError("Resposta da API inválida.");
@@ -34,7 +40,7 @@ const useTrackInfo = ({ wsUrl, apiUrl }) => {
     }
   };
 
-  // Configurando o WebSocket
+  // Configuração do WebSocket
   useEffect(() => {
     if (!wsUrl) return;
 
@@ -42,7 +48,7 @@ const useTrackInfo = ({ wsUrl, apiUrl }) => {
 
     socket.onopen = () => {
       console.log("WebSocket conectado:", wsUrl);
-      fetchCurrentTrack(); // Faz a chamada HTTPS ao conectar
+      fetchCurrentTrack(); // Busca inicial via API
     };
 
     socket.onmessage = (event) => {
@@ -56,9 +62,10 @@ const useTrackInfo = ({ wsUrl, apiUrl }) => {
             track: title || "Desconhecido",
             albumCover: albumCover || null,
           });
+        } else if (data.message) {
+          console.log("Mensagem do WebSocket:", data.message);
         } else {
-          console.error("Dados do WebSocket inválidos:", data);
-          setError("Dados do WebSocket inválidos.");
+          console.error("Dados inválidos do WebSocket:", data);
         }
       } catch (err) {
         console.error("Erro ao processar mensagem do WebSocket:", err.message);

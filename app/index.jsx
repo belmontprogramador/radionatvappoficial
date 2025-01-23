@@ -13,6 +13,7 @@ import Carousel from "../components/Carousel";
 import MainPlayer from "../components/MainPlayer"; // Importando o MainPlayer
 import { GenreProvider } from "../contexts/GenreContext"; // Importando o contexto
 import RegistrarToken from "../components/RegistrarToken"; // Importando o componente de registro
+import InteractionBar from "../components/InteractionBar";
 
 // Obter as dimensões da tela
 const { height } = Dimensions.get("window");
@@ -20,19 +21,16 @@ const { height } = Dimensions.get("window");
 export default function HomeScreen() {
   return (
     <GenreProvider>
-      {/* Envolvendo a tela com o GenreProvider */}
-      <RegistrarToken /> {/* Modal de permissão para notificações */}
-      <Stack.Screen
-        options={{
-          headerShown: false, // Remove a faixa de navegação apenas para esta tela
-        }}
-      />
+    
+      <RegistrarToken /> 
+      
       <SafeAreaView style={styles.screen}>
         <NavBar />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Banners />
           <Sorteios />
           <Carousel />
+          <InteractionBar />
         </ScrollView>
         <MainPlayer />
       </SafeAreaView>

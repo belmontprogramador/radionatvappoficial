@@ -43,15 +43,20 @@ export default function Banner() {
   // Determinar qual imagem exibir
   const getCurrentImage = () => {
     if (currentImageIndex === 0 || images.length === 0) {
-      return localImage; // Mostrar imagem local no índice 0 ou se não houver imagens
+      return localImage;
     }
-
-    // Concatena a URL base com o caminho da imagem
+  
     const imagePath = images[currentImageIndex - 1]?.path;
+  
+    // Garante que a URL será gerada apenas se o caminho for válido
+    if (!imagePath) {
+      return localImage;
+    }
+  
     const fullImageUrl = `https://nativa.felipebelmont.com/${imagePath}`;
-
-    return imagePath ? { uri: fullImageUrl } : localImage; // Retorna a imagem completa ou a imagem local
+    return { uri: fullImageUrl };
   };
+  
 
   return (
     <View style={styles.banner}>

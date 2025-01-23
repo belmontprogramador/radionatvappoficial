@@ -16,53 +16,54 @@ const RegistrarToken = () => {
   const [showConsentModal, setShowConsentModal] = useState(false); // Controle do modal
   const [deviceToken, setDeviceToken] = useState(null); // Token do dispositivo
 
+  // Função para verificar o token e o momento do último modal exibido
+  const checkTokenAndModalTiming = async () => {
+    if (!Device.isDevice) {
+      console.warn("Notificações push só funcionam em dispositivos físicos.");
+      return;
+    }
+
+    try {
+      // Verificar a última exibição do modal
+      const lastModalShown = await AsyncStorage.getItem("lastModalShown");
+      const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+      const now = Date.now();
+
+      if (lastModalShown && now - parseInt(lastModalShown) < oneWeekInMilliseconds) {
+        console.log("Modal foi exibido recentemente. Não exibindo novamente.");
+        return; // Modal foi exibido dentro de uma semana
+      }
+
+      // Obter o token do dispositivo
+      const tokenData = await Notifications.getExpoPushTokenAsync();
+      const expoPushToken = tokenData.data.trim();
+      setDeviceToken(expoPushToken);
+      console.log("Token do dispositivo:", expoPushToken);
+
+      // Fazer uma requisição ao backend para listar os tokens
+      const response = await axios.get(
+        "https://nativa.felipebelmont.com/api/token/tokens"
+      );
+
+      const tokens = response.data.map((item) => item.token); // Extrair apenas os tokens
+      console.log("Tokens registrados no banco:", tokens);
+
+      // Verificar se o token do dispositivo já está registrado
+      const tokenExists = tokens.includes(expoPushToken);
+
+      if (!tokenExists) {
+        console.log("Token não encontrado no banco. Exibindo modal.");
+        setShowConsentModal(true);
+        await AsyncStorage.setItem("lastModalShown", now.toString()); // Salvar data da exibição
+      } else {
+        console.log("Token já registrado no banco.");
+      }
+    } catch (error) {
+      console.error("Erro ao verificar token ou modal:", error.message);
+    }
+  };
+
   useEffect(() => {
-    const checkTokenAndModalTiming = async () => {
-      if (!Device.isDevice) {
-        console.warn("Notificações push só funcionam em dispositivos físicos.");
-        return;
-      }
-
-      try {
-        // Verificar a última exibição do modal
-        const lastModalShown = await AsyncStorage.getItem("lastModalShown");
-        const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-        const now = Date.now();
-
-        if (lastModalShown && now - parseInt(lastModalShown) < oneWeekInMilliseconds) {
-          console.log("Modal foi exibido recentemente. Não exibindo novamente.");
-          return; // Modal foi exibido dentro de uma semana
-        }
-
-        // Obter o token do dispositivo
-        const tokenData = await Notifications.getExpoPushTokenAsync();
-        const expoPushToken = tokenData.data.trim();
-        setDeviceToken(expoPushToken);
-        console.log("Token do dispositivo:", expoPushToken);
-
-        // Fazer uma requisição ao backend para listar os tokens
-        const response = await axios.get(
-          "https://nativa.felipebelmont.com/api/token/tokens"
-        );
-
-        const tokens = response.data.map((item) => item.token); // Extrair apenas os tokens
-        console.log("Tokens registrados no banco:", tokens);
-
-        // Verificar se o token do dispositivo já está registrado
-        const tokenExists = tokens.includes(expoPushToken);
-
-        if (!tokenExists) {
-          console.log("Token não encontrado no banco. Exibindo modal.");
-          setShowConsentModal(true);
-          await AsyncStorage.setItem("lastModalShown", now.toString()); // Salvar data da exibição
-        } else {
-          console.log("Token já registrado no banco.");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token ou modal:", error.message);
-      }
-    };
-
     checkTokenAndModalTiming();
   }, []);
 
