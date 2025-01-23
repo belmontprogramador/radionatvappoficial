@@ -1,26 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 
 export default function InteractionBar() {
-  const [likeCount, setLikeCount] = useState(3521); // Inicia com 3521 likes
-  const [isLiked, setIsLiked] = useState(false); // Estado para controlar o preenchimento do botão
+  const [likeCount, setLikeCount] = useState(0); // Contagem de likes vinda da API
+  const [isLiked, setIsLiked] = useState(false); // Estado local para controle de likes
 
-  const handleLike = () => {
-    if (isLiked) {
-      setLikeCount(likeCount - 1); // Decrementa se já estiver curtido
-    } else {
-      setLikeCount(likeCount + 1); // Incrementa se não estiver curtido
+  // Função para buscar o número inicial de likes
+  const fetchInitialLikes = async () => {
+    try {
+      const response = await axios.get("https://nativa.felipebelmont.com/api/interaction/interactions");
+      setLikeCount(response.data.totalLikes); // Define a contagem inicial
+    } catch (err) {
+      console.error("Erro ao buscar contagem de likes:", err.message);
     }
-    setIsLiked(!isLiked); // Alterna o estado de "curtido"
   };
 
-   
-  const handleShare = () => {
-    Linking.openURL("https://nativaon.com").catch((err) =>
+  // Função para registrar um like no backend
+  const handleLike = async () => {
+    // Atualiza o estado local para refletir a mudança imediatamente
+    if (isLiked) {
+      setIsLiked(false);
+      setLikeCount((prev) => prev - 1);
+    } else {
+      setIsLiked(true);
+      setLikeCount((prev) => prev + 1);
+    }
+
+    // Envia a interação para o backend
+    try {
+      await axios.post("https://nativa.felipebelmont.com/api/interaction/interactions", { type: "like" });
+    } catch (err) {
+      console.error("Erro ao registrar like:", err.message);
+    }
+  };
+
+  // Função para compartilhar o link
+  const handleShare = async () => {
+    Linking.openURL("https://nativaonstream.com").catch((err) =>
       console.error("Erro ao abrir o navegador:", err)
     );
+
+    // Registrar o compartilhamento no backend
+    try {
+      await axios.post("https://nativa.felipebelmont.com/api/interaction/interactions", { type: "share" });
+    } catch (err) {
+      console.error("Erro ao registrar compartilhamento:", err.message);
+    }
   };
+
+  // Carrega o número inicial de likes ao montar o componente
+  useEffect(() => {
+    fetchInitialLikes();
+  }, []);
 
   return (
     <View style={styles.container}>

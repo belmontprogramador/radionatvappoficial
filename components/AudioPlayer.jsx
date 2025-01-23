@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   Dimensions,
 } from "react-native";
 import { Audio } from "expo-av";
@@ -18,7 +17,6 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
   const { trackInfo, error } = useTrackInfo({ wsUrl, apiUrl });
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const configureAudio = async () => {
@@ -35,9 +33,9 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
         console.error("Erro ao configurar áudio:", err.message);
       }
     };
-  
+
     configureAudio();
-  
+
     return () => {
       if (sound) {
         sound.stopAsync(); // Para o áudio atual
@@ -45,11 +43,9 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
       }
     };
   }, [streamUrl]);
-  
 
   const loadAudio = async (url) => {
     try {
-      setIsLoading(true);
       if (sound) {
         await sound.stopAsync();
         await sound.unloadAsync();
@@ -62,15 +58,12 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
       setIsPlaying(true);
     } catch (err) {
       console.error("Erro ao carregar áudio:", err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const togglePlayPause = async () => {
-    if (isLoading || !sound) return;
+    if (!sound) return;
 
-    setIsLoading(true);
     try {
       if (isPlaying) {
         await sound.pauseAsync();
@@ -81,8 +74,6 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
       }
     } catch (err) {
       console.error("Erro ao pausar/iniciar o áudio:", err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -97,7 +88,6 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
         style={styles.albumCover}
       />
       <View style={styles.infoContainer}>
-        {/* Verifica se track e artist são strings antes de renderizar */}
         <Text style={styles.title}>
           {typeof trackInfo?.track === "string" ? trackInfo.track : "Título desconhecido"}
         </Text>
@@ -106,15 +96,11 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
         </Text>
       </View>
       <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#FFA726" />
-        ) : (
-          <Ionicons
-            name={isPlaying ? "pause-circle" : "play-circle"}
-            size={width * 0.17}
-            color="#FFA726"
-          />
-        )}
+        <Ionicons
+          name={isPlaying ? "pause-circle" : "play-circle"}
+          size={width * 0.17}
+          color="#FFA726"
+        />
       </TouchableOpacity>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -141,7 +127,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontSize: 16,    
+    fontSize: 16,
   },
   subtitle: {
     color: "#ccc",
