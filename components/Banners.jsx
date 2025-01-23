@@ -10,16 +10,15 @@ export default function Banner() {
   // Função para buscar as imagens da API
   const fetchImages = async () => {
     try {
-      const response = await axios.get("https://nativa.felipebelmont.com/api/sponsor/banner");
+      const response = await axios.get("https://nativa.felipebelmont.com/api/banner/banners"); // URL atualizada
 
-      // Filtrar apenas as imagens com status true
-      const activeImages = response.data.filter((image) => image.status === true);
+      // Acessa a chave 'banners' e filtra as imagens com status true
+      const activeImages = response.data.banners.filter((image) => image.status === true);
 
-      setImages(activeImages);
+      setImages(activeImages); // Define as imagens ativas no estado
     } catch (error) {
-      // Loga o erro no console para depuração, mas não afeta a exibição
-      console.error("Erro ao buscar imagens:", error);
-      setImages([]); // Define um array vazio se ocorrer erro
+      console.log("Nenhum banner encontrado ou erro na API."); // Loga apenas como informação
+      setImages([]); // Define um array vazio se ocorrer erro ou a API estiver sem banners
     }
   };
 
@@ -43,20 +42,19 @@ export default function Banner() {
   // Determinar qual imagem exibir
   const getCurrentImage = () => {
     if (currentImageIndex === 0 || images.length === 0) {
-      return localImage;
+      return localImage; // Exibe a imagem local se não houver banners ativos
     }
-  
+
     const imagePath = images[currentImageIndex - 1]?.path;
-  
+
     // Garante que a URL será gerada apenas se o caminho for válido
     if (!imagePath) {
       return localImage;
     }
-  
+
     const fullImageUrl = `https://nativa.felipebelmont.com/${imagePath}`;
     return { uri: fullImageUrl };
   };
-  
 
   return (
     <View style={styles.banner}>

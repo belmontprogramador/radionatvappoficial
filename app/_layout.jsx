@@ -32,7 +32,7 @@ function getHeaderTitle(route) {
   const titles = {
     home: "Página Inicial",
     sorteio: "Sorteios",
-    "sorteio/index": "Detalhes do Sorteio",
+    "sorteio/index": "Detalhes da Promoção",
   };
 
   // Trata a rota dinâmica "inscreversorteio/[id]"

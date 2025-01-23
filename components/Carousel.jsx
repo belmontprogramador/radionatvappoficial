@@ -91,8 +91,9 @@ export default function Carousel() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 40,
     paddingHorizontal: 10,
+    paddingTop: 10,
   },
   title: {
     fontSize: 16,

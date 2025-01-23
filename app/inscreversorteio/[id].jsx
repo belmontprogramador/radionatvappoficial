@@ -152,7 +152,7 @@ export default function InscricaoSorteio() {
           errorMessage={errorMessage}
         />
 
-        <Text style={styles.title}>Inscrição no Sorteio</Text>
+        <Text style={styles.title}>Inscreva-se na Promoção</Text>
         <TextInput
           style={styles.input}
           placeholder="Nome"

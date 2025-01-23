@@ -9,6 +9,7 @@ const { width, height } = Dimensions.get("window");
 export default function Sorteios() {
   const router = useRouter();
   const [sorteios, setSorteios] = useState([]);
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
 
   const fetchSorteios = async () => {
     try {
@@ -17,6 +18,8 @@ export default function Sorteios() {
       setSorteios(sorteiosAtivos);
     } catch (error) {
       console.error("Erro ao buscar os sorteios:", error.message);
+    } finally {
+      setLoading(false); // Finaliza o carregamento
     }
   };
 
@@ -28,25 +31,41 @@ export default function Sorteios() {
     router.push(`/inscreversorteio/${id}`); // Rota dinâmica
   };
 
+  if (loading) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.loadingText}>Carregando sorteios...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
-      <Text style={styles.title}>Sorteios Disponíveis</Text>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {sorteios.map((sorteio) => (
-          <TouchableOpacity
-            key={sorteio.id}
-            style={styles.card}
-            onPress={() => handleNavigateToSorteio(sorteio.id)}
-          >
-            <Image
-              source={{ uri: `https://nativa.felipebelmont.com/${sorteio.bannerPath}` }}
-              style={styles.image}
-            />
-            <Text style={styles.name}>{sorteio.nome}</Text>
-            <Text style={styles.description}>{sorteio.descricao}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <Text style={styles.title}>Promoções Disponíveis</Text>
+      {sorteios.length === 0 ? (
+        <View style={styles.fallbackContainer}>
+          <Text style={styles.fallbackText}>
+            Por enquanto, não temos promoção ativa. Fique ligado, em breve teremos!
+          </Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {sorteios.map((sorteio) => (
+            <TouchableOpacity
+              key={sorteio.id}
+              style={styles.card}
+              onPress={() => handleNavigateToSorteio(sorteio.id)}
+            >
+              <Image
+                source={{ uri: `https://nativa.felipebelmont.com/${sorteio.bannerPath}` }}
+                style={styles.image}
+              />
+              <Text style={styles.name}>{sorteio.nome}</Text>
+              <Text style={styles.description}>{sorteio.descricao}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -67,6 +86,24 @@ const styles = StyleSheet.create({
     color: "#FFB020",
     textAlign: "center",
     marginBottom: 20,
+  },
+  fallbackContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  fallbackText: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    marginTop: 20,
   },
   card: {
     backgroundColor: "#2C353E", // Fundo cinza escuro
