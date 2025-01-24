@@ -12,7 +12,6 @@ import Sorteios from "../components/Sorteio";
 import Carousel from "../components/Carousel";
 import MainPlayer from "../components/MainPlayer"; // Importando o MainPlayer
 import { GenreProvider } from "../contexts/GenreContext"; // Importando o contexto
-import RegistrarToken from "../components/RegistrarToken"; // Importando o componente de registro
 import InteractionBar from "../components/InteractionBar";
 
 // Obter as dimensões da tela
@@ -22,7 +21,7 @@ export default function HomeScreen() {
   return (
     <GenreProvider>
     
-      <RegistrarToken /> 
+   
       
       <SafeAreaView style={styles.screen}>
         <NavBar />

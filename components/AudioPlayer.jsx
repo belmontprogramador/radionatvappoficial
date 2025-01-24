@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import useTrackInfo from "./useTrackInfo";
 
 const { width } = Dimensions.get("window");
 
-const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
-  const { trackInfo, error } = useTrackInfo({ wsUrl, apiUrl });
+const AudioPlayer = ({ streamUrl, apiUrl }) => {
+  const { trackInfo } = useTrackInfo({ apiUrl });
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -24,9 +17,7 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
           playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
+          staysActiveInBackground: true, // Garante execução em segundo plano
         });
         await loadAudio(streamUrl);
       } catch (err) {
@@ -38,8 +29,8 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
 
     return () => {
       if (sound) {
-        sound.stopAsync(); // Para o áudio atual
-        sound.unloadAsync(); // Descarta o áudio carregado
+        sound.stopAsync();
+        sound.unloadAsync();
       }
     };
   }, [streamUrl]);
@@ -52,10 +43,17 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
       }
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: url },
-        { shouldPlay: true }
+        { shouldPlay: true, staysActiveInBackground: true } // Configuração para segundo plano
       );
       setSound(newSound);
       setIsPlaying(true);
+
+      // Mantém o áudio tocando no plano de fundo
+      newSound.setOnPlaybackStatusUpdate((status) => {
+        if (!status.isPlaying && status.didJustFinish) {
+          setIsPlaying(false);
+        }
+      });
     } catch (err) {
       console.error("Erro ao carregar áudio:", err.message);
     }
@@ -79,21 +77,9 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={
-          trackInfo?.albumCover
-            ? { uri: trackInfo.albumCover }
-            : require("../assets/images/banners.png")
-        }
-        style={styles.albumCover}
-      />
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>
-          {typeof trackInfo?.track === "string" ? trackInfo.track : "Título desconhecido"}
-        </Text>
-        <Text style={styles.subtitle}>
-          {typeof trackInfo?.artist === "string" ? trackInfo.artist : "Artista desconhecido"}
-        </Text>
+        <Text style={styles.title}>{trackInfo?.track || "Título desconhecido"}</Text>
+        <Text style={styles.subtitle}>{trackInfo?.artist || "Artista desconhecido"}</Text>
       </View>
       <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
         <Ionicons
@@ -102,7 +88,6 @@ const AudioPlayer = ({ streamUrl, wsUrl, apiUrl }) => {
           color="#FFA726"
         />
       </TouchableOpacity>
-      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };
@@ -115,12 +100,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#333",
     padding: 15,
     borderRadius: 10,
-  },
-  albumCover: {
-    width: 60,
-    height: 60,
-    borderRadius: 5,
-    marginRight: 10,
   },
   infoContainer: {
     flex: 1,
@@ -135,12 +114,6 @@ const styles = StyleSheet.create({
   },
   playButton: {
     marginLeft: 10,
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: 10,
   },
 });
 

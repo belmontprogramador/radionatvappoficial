@@ -1,4 +1,4 @@
-import React from "react";
+// Carouseimport React from "react";
 import {
   View,
   FlatList,
@@ -15,32 +15,28 @@ const radios = [
     source: require("../assets/images/radio-nativa-popular.png"),
     title: "Popular",
     streamUrl: "https://stm1.playstm.com:7018/stream",
-    wsUrl: "wss://nativa.felipebelmont.com/popular",
-    apiUrl: "https://nativa.felipebelmont.com/api/kts/popular/current",
+    apiUrl: "https://stm1.playstm.com:7018/stats?sid=1&json=1",
   },
   {
     id: "2",
     source: require("../assets/images/radio-nativa-sertanejo.png"),
     title: "Sertanejo",
     streamUrl: "https://stm1.playstm.com:7014/stream",
-    wsUrl: "wss://nativa.felipebelmont.com/sertanejo",
-    apiUrl: "https://nativa.felipebelmont.com/api/kts/sertanejo/current",
+    apiUrl: "https://stm1.playstm.com:7014/stats?sid=1&json=1",
   },
   {
     id: "3",
     source: require("../assets/images/radio-nativa-gospel.png"),
     title: "Gospel",
     streamUrl: "https://stm1.playstm.com:7016/stream",
-    wsUrl: "wss://nativa.felipebelmont.com/gospel",
-    apiUrl: "https://nativa.felipebelmont.com/api/kts/gospel/current",
+    apiUrl: "https://stm1.playstm.com:7016/stats?sid=1&json=1",
   },
   {
     id: "4",
     source: require("../assets/images/radio-nativa-pagode.png"),
     title: "Pagode",
     streamUrl: "https://stm1.playstm.com:7022/stream",
-    wsUrl: "wss://nativa.felipebelmont.com/pagode",
-    apiUrl: "https://nativa.felipebelmont.com/api/kts/pagode/current",
+    apiUrl: "https://stm1.playstm.com:7022/stats?sid=1&json=1",
   },
 ];
 
@@ -50,12 +46,10 @@ export default function Carousel() {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        // Verifica se o gênero selecionado é diferente do atual
         if (currentGenre.id !== item.id) {
           setCurrentGenre({
             id: item.id,
             streamUrl: item.streamUrl,
-            wsUrl: item.wsUrl,
             apiUrl: item.apiUrl,
             title: item.title,
             nowPlaying: {
@@ -72,7 +66,6 @@ export default function Carousel() {
       <Image source={item.source} style={styles.image} resizeMode="contain" />
     </TouchableOpacity>
   );
-  
 
   return (
     <View style={styles.container}>

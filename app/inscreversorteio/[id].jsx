@@ -12,7 +12,6 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import axios from "axios";
-import * as Notifications from "expo-notifications";
 import ErrorModal from "../../components/ErrorModal";
 
 export default function InscricaoSorteio() {
@@ -30,24 +29,10 @@ export default function InscricaoSorteio() {
 
   const [estados, setEstados] = useState([]); // Lista de estados
   const [cidades, setCidades] = useState([]); // Lista de cidades do estado selecionado
-  const [expoPushToken, setExpoPushToken] = useState(""); // Token do Expo
   const [loading, setLoading] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false); // Controle de visibilidade do modal
   const [errorMessage, setErrorMessage] = useState(""); // Mensagem de erro exibida no modal
   const [loadingCidades, setLoadingCidades] = useState(false); // Indicador de carregamento das cidades
-
-  // Função para obter o token do Expo
-  const registerForPushNotificationsAsync = async () => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMessage("Permissão para notificações foi negada!");
-      setErrorVisible(true);
-      return;
-    }
-
-    const tokenData = await Notifications.getExpoPushTokenAsync();
-    setExpoPushToken(tokenData.data); // Salva o token no estado
-  };
 
   // Função para buscar os estados da API do IBGE
   const fetchEstados = async () => {
@@ -89,7 +74,6 @@ export default function InscricaoSorteio() {
   // Carregar os estados ao montar o componente
   useEffect(() => {
     fetchEstados();
-    registerForPushNotificationsAsync();
   }, []);
 
   // Atualizar cidades ao selecionar um estado
@@ -108,19 +92,12 @@ export default function InscricaoSorteio() {
       return;
     }
 
-    if (!expoPushToken) {
-      setErrorMessage("Não foi possível obter o token do dispositivo.");
-      setErrorVisible(true);
-      return;
-    }
-
     setLoading(true);
 
     try {
       const response = await axios.post("https://nativa.felipebelmont.com/api/sorteiousuario", {
         ...form,
         sorteioId: id,
-        token: expoPushToken,
       });
 
       Alert.alert(
@@ -227,50 +204,50 @@ export default function InscricaoSorteio() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: "#2C353E", // Fundo cinza escuro
+    backgroundColor: "#2C353E",
     paddingBottom: 20,
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#2C353E", // Fundo cinza escuro
+    backgroundColor: "#2C353E",
     borderRadius: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#FFB020", // Cor laranja
+    color: "#FFB020",
     marginBottom: 20,
     textAlign: "center",
   },
   input: {
     height: 50,
-    borderColor: "#FFB020", // Borda laranja
+    borderColor: "#FFB020",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    color: "#fff", // Texto branco
-    backgroundColor: "#3A3F44", // Fundo cinza intermediário
+    color: "#fff",
+    backgroundColor: "#3A3F44",
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
-    color: "#FFB020", // Cor laranja
+    color: "#FFB020",
     fontWeight: "bold",
   },
   picker: {
     height: 50,
-    borderColor: "#FFB020", // Borda laranja
+    borderColor: "#FFB020",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
-    color: "#fff", // Texto branco
-    backgroundColor: "#3A3F44", // Fundo cinza intermediário
+    color: "#fff",
+    backgroundColor: "#3A3F44",
   },
   button: {
     height: 50,
-    backgroundColor: "#FFB020", // Fundo laranja
+    backgroundColor: "#FFB020",
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
@@ -278,7 +255,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: "#fff", // Texto branco
+    color: "#fff",
     fontWeight: "bold",
   },
   activityIndicator: {
