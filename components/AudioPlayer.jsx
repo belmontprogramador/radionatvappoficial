@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
+import { useKeepAwake } from "expo-keep-awake";
 import useTrackInfo from "./useTrackInfo";
 
 const { width } = Dimensions.get("window");
 
 const AudioPlayer = ({ streamUrl, apiUrl }) => {
+  useKeepAwake(); // Impede o app de dormir
   const { trackInfo } = useTrackInfo({ apiUrl });
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -17,7 +19,9 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
           playsInSilentModeIOS: true,
-          staysActiveInBackground: true, // Garante execução em segundo plano
+          staysActiveInBackground: true,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false,
         });
         await loadAudio(streamUrl);
       } catch (err) {
@@ -43,12 +47,11 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
       }
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: url },
-        { shouldPlay: true, staysActiveInBackground: true } // Configuração para segundo plano
+        { shouldPlay: true, isLooping: true, staysActiveInBackground: true }
       );
       setSound(newSound);
       setIsPlaying(true);
 
-      // Mantém o áudio tocando no plano de fundo
       newSound.setOnPlaybackStatusUpdate((status) => {
         if (!status.isPlaying && status.didJustFinish) {
           setIsPlaying(false);
