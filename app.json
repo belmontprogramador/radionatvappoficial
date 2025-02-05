@@ -8,7 +8,6 @@
     "icon": "./assets/images/adaptive-icon.png",
     "scheme": "nativaonstreaming",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.belmontprogramador.radionativaonstreaming",
@@ -16,7 +15,11 @@
         "NSCameraUsageDescription": "Este aplicativo precisa acessar a câmera para recursos de gravação.",
         "NSMicrophoneUsageDescription": "Este aplicativo precisa acessar o microfone para gravar áudio.",
         "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para melhorar a experiência do usuário.",
-        "UIBackgroundModes": ["audio", "fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "audio",
+          "fetch",
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -26,7 +29,8 @@
         "WAKE_LOCK",
         "RECORD_AUDIO",
         "FOREGROUND_SERVICE",
-        "POST_NOTIFICATIONS"
+        "POST_NOTIFICATIONS",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -70,9 +74,8 @@
         "origin": false
       },
       "eas": {
-        "projectId": "95cb1a41-3f9a-41ad-af85-9051c3d03bc0"
+        "projectId": "ecc8d078-eb97-4219-a894-b65a6f72195c"
       }
-    },
-    "owner": "nativaonstreaming"
+    }
   }
 }

@@ -1,31 +1,63 @@
 {
-    "cli": {
-      "version": ">= 14.2.0",
-      "appVersionSource": "local"
+  "cli": {
+    "version": ">= 14.2.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "base": {
+      "node": "20.15.1",
+      "android": {
+        "image": "latest",
+        "buildType":"apk",
+        "env": {
+          "PLATFORM": "android"
+        }
+      },
+      "channel": "base"
     },
-    "build": {
-      "development": {
-        "developmentClient": true,
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
+      "android": {
         "distribution": "internal",
-        "android": {
-          "buildType": "apk"
-        },
-        "channel": "development"
+        "withoutCredentials": true
       },
-      "preview": {
-        "distribution": "internal",
-        "android": {
-          "buildType": "apk"
-        },
-        "channel": "preview"
+      "channel": "development"
+    },
+    "staging": {
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "staging"
       },
-      "production": {
-        "autoIncrement": false,
-        "android": {
-          "buildType": "app-bundle"
-        },
-        "channel": "production"
-      }
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "staging"
+    },
+    "production": {
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "production"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "production"
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "env": {
+          "PLATFORM": "android"
+        }
+      },
+      "channel": "preview"
     }
+  },
+  "submit": {
+    "production": {}
   }
-  
+}

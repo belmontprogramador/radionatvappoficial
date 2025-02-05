@@ -20,9 +20,6 @@ const { height } = Dimensions.get("window");
 export default function HomeScreen() {
   return (
     <GenreProvider>
-    
-   
-      
       <SafeAreaView style={styles.screen}>
         <NavBar />
         <ScrollView contentContainerStyle={styles.scrollContainer}>

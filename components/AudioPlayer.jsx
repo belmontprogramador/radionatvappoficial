@@ -1,76 +1,63 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { Audio } from "expo-av";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  AppState,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useKeepAwake } from "expo-keep-awake";
 import useTrackInfo from "./useTrackInfo";
+import TrackPlayer, { Capability } from "react-native-track-player";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
+TrackPlayer.registerPlaybackService(() => require("../service"));
+
 const AudioPlayer = ({ streamUrl, apiUrl }) => {
-  useKeepAwake(); // Impede o app de dormir
+  useKeepAwake();
   const { trackInfo } = useTrackInfo({ apiUrl });
-  const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    const configureAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
-        });
-        await loadAudio(streamUrl);
-      } catch (err) {
-        console.error("Erro ao configurar áudio:", err.message);
-      }
-    };
-
-    configureAudio();
-
-    return () => {
-      if (sound) {
-        sound.stopAsync();
-        sound.unloadAsync();
-      }
-    };
-  }, [streamUrl]);
+  const setupAudio = async () => {
+    try {
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        capabilities: [Capability.Stop],
+        compactCapabilities: [Capability.Stop],
+        notificationCapabilities: [Capability.Stop],
+      });
+      setIsInitialized(true);
+      console.log("Player inicializado com sucesso");
+    } catch (err) {
+      console.error("Erro ao configurar áudio:", err.message);
+    }
+  };
 
   const loadAudio = async (url) => {
     try {
-      if (sound) {
-        await sound.stopAsync();
-        await sound.unloadAsync();
-      }
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: url },
-        { shouldPlay: true, isLooping: true, staysActiveInBackground: true }
-      );
-      setSound(newSound);
+      await TrackPlayer.reset();
+      await TrackPlayer.add([{ url: url, isLiveStream: true }]);
+      await TrackPlayer.play();
       setIsPlaying(true);
-
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (!status.isPlaying && status.didJustFinish) {
-          setIsPlaying(false);
-        }
-      });
+      console.log("Áudio carregado e reprodução iniciada");
     } catch (err) {
       console.error("Erro ao carregar áudio:", err.message);
     }
   };
 
   const togglePlayPause = async () => {
-    if (!sound) return;
-
     try {
-      if (isPlaying) {
-        await sound.pauseAsync();
+      const state = await TrackPlayer.getPlaybackState();
+      if (state.state === "playing") {
+        await TrackPlayer.stop();
         setIsPlaying(false);
       } else {
-        await sound.playAsync();
+        await TrackPlayer.play();
         setIsPlaying(true);
       }
     } catch (err) {
@@ -78,11 +65,55 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
     }
   };
 
+  const handleNotificationClick = async () => {
+    const state = await TrackPlayer.getPlaybackState();
+    if (state.state === "playing") {
+      router.navigate("/");
+    }
+  };
+
+  AppState.addEventListener("change", async (nextAppState) => {
+    if (nextAppState === "active") {
+      handleNotificationClick();
+    }
+  });
+
+  
+
+  useEffect(() => {
+    const initializePlayer = async () => {
+      await setupAudio();
+      if (streamUrl) {
+        await loadAudio(streamUrl);
+      }
+    };
+
+    initializePlayer();
+
+    return () => {
+      TrackPlayer.reset();
+      TrackPlayer.stop();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized && streamUrl) {
+      const handleUrlChange = async () => {
+        await loadAudio(streamUrl);
+      };
+      handleUrlChange();
+    }
+  }, [streamUrl, isInitialized]);
+
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{trackInfo?.track || "Título desconhecido"}</Text>
-        <Text style={styles.subtitle}>{trackInfo?.artist || "Artista desconhecido"}</Text>
+        <Text style={styles.title}>
+          {trackInfo?.track || "Título desconhecido"}
+        </Text>
+        <Text style={styles.subtitle}>
+          {trackInfo?.artist || "Artista desconhecido"}
+        </Text>
       </View>
       <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
         <Ionicons
@@ -94,6 +125,8 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
     </View>
   );
 };
+
+// Os estilos permanecem os mesmos
 
 const styles = StyleSheet.create({
   container: {

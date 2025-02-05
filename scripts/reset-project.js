@@ -53,7 +53,7 @@ const moveDirectories = async () => {
         await fs.promises.rename(oldDirPath, newDirPath);
         console.log(`➡️ /${dir} moved to /${newDir}/${dir}.`);
       } else {
-        console.log(`➡️ /${dir} does not exist, skipping.`);
+        console.log(`➡️ /${dir} does  exist, skipping.`);
       }
     }
 
