@@ -1,7 +1,20 @@
 import { Stack } from "expo-router";
 import { Image } from "react-native";
+import * as Linking from "expo-linking";
+import { router } from "expo-router";
+import { useEffect } from "react";
 
 export default function Layout() {
+  const url = Linking.useURL();
+
+  // useEffect(() => {
+  //   console.log("URL recebida:", url);
+
+  //   if (url === "trackplayer://notification.click" || !url) {
+  //      return;
+  //   }
+  // }, [url, router]);
+
   return (
     <Stack
       screenOptions={({ route }) => ({

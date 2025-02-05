@@ -1,5 +1,4 @@
 import React from "react";
-import { Stack } from "expo-router";
 import {
   StyleSheet,
   ScrollView,
@@ -18,6 +17,7 @@ import InteractionBar from "../components/InteractionBar";
 const { height } = Dimensions.get("window");
 
 export default function HomeScreen() {
+  
   return (
     <GenreProvider>
       <SafeAreaView style={styles.screen}>

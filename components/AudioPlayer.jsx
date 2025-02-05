@@ -27,9 +27,9 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
     try {
       await TrackPlayer.setupPlayer();
       await TrackPlayer.updateOptions({
-        capabilities: [Capability.Stop],
-        compactCapabilities: [Capability.Stop],
-        notificationCapabilities: [Capability.Stop],
+        capabilities: [],
+        compactCapabilities: [],
+        notificationCapabilities: [],
       });
       setIsInitialized(true);
       console.log("Player inicializado com sucesso");
@@ -64,22 +64,7 @@ const AudioPlayer = ({ streamUrl, apiUrl }) => {
       console.error("Erro ao pausar/iniciar o áudio:", err.message);
     }
   };
-
-  const handleNotificationClick = async () => {
-    const state = await TrackPlayer.getPlaybackState();
-    if (state.state === "playing") {
-      router.navigate("/");
-    }
-  };
-
-  AppState.addEventListener("change", async (nextAppState) => {
-    if (nextAppState === "active") {
-      handleNotificationClick();
-    }
-  });
-
   
-
   useEffect(() => {
     const initializePlayer = async () => {
       await setupAudio();

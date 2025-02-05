@@ -4,60 +4,27 @@
     "appVersionSource": "local"
   },
   "build": {
-    "base": {
-      "node": "20.15.1",
-      "android": {
-        "image": "latest",
-        "buildType":"apk",
-        "env": {
-          "PLATFORM": "android"
-        }
-      },
-      "channel": "base"
-    },
     "development": {
-      "extends": "base",
       "developmentClient": true,
+      "distribution": "internal",
       "android": {
-        "distribution": "internal",
-        "withoutCredentials": true
+        "buildType": "apk"
       },
       "channel": "development"
     },
-    "staging": {
-      "extends": "base",
-      "env": {
-        "ENVIRONMENT": "staging"
-      },
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "channel": "staging"
-    },
-    "production": {
-      "extends": "base",
-      "env": {
-        "ENVIRONMENT": "production"
-      },
-      "android": {
-        "buildType": "apk"
-      },
-      "channel": "production"
-    },
     "preview": {
-      "extends": "base",
       "distribution": "internal",
       "android": {
-        "buildType": "apk",
-        "env": {
-          "PLATFORM": "android"
-        }
+        "buildType": "apk"
       },
       "channel": "preview"
+    },
+    "production": {
+      "autoIncrement": false,
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "channel": "production"
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
