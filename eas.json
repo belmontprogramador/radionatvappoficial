@@ -3,28 +3,78 @@
     "version": ">= 14.2.0",
     "appVersionSource": "local"
   },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
+ "build": {
+    "base": {
+      "node": "22.11.0",
       "android": {
-        "buildType": "apk"
+        "image": "latest",
+        "env": {
+          "PLATFORM": "android"
+        }
+      },
+      "ios": {
+        "image": "latest",
+        "env": {
+          "PLATFORM": "ios"
+        }
+      },
+      "channel": "base"
+    },
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
+      "android": {
+        "distribution": "internal",
+        "withoutCredentials": true
+      },
+      "ios": {
+        "simulator": true
       },
       "channel": "development"
     },
-    "preview": {
+    "staging": {
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "staging"
+      },
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
-      "channel": "preview"
+      "channel": "staging"
     },
     "production": {
-      "autoIncrement": false,
-      "android": {
-        "buildType": "app-bundle"
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "production"
       },
       "channel": "production"
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "env": {
+          "PLATFORM": "android"
+        }
+      },
+      "ios": {
+        "simulator": true,
+        "env": {
+          "PLATFORM": "ios"
+        }
+      },
+      "channel": "preview"
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "appsnativaon@gmail.com",
+        "ascAppId": "6741536881",
+        "appleTeamId": "7ZQ9S4U9AC"
+      }
     }
   }
 }

@@ -2,8 +2,8 @@
   "expo": {
     "name": "Nativa OnStreaming",
     "slug": "radio-nativa-onstreaming",
-    "version": "1.0.1",
-    "runtimeVersion": "1.0.1",
+    "version": "1.0.2",
+    "runtimeVersion": "1.0.2",
     "orientation": "default",
     "icon": "./assets/images/adaptive-icon.png",
     "scheme": "nativaonstreaming",
@@ -20,7 +20,7 @@
       }
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "INTERNET",
         "WAKE_LOCK",
@@ -56,7 +56,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ecc8d078-eb97-4219-a894-b65a6f72195c"
+        
       }
     }
   }
