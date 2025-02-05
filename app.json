@@ -12,9 +12,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.belmontprogramador.radionativaonstreaming",
       "infoPlist": {
-        "NSCameraUsageDescription": "Este aplicativo precisa acessar a câmera para recursos de gravação.",
-        "NSMicrophoneUsageDescription": "Este aplicativo precisa acessar o microfone para gravar áudio.",
-        "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para melhorar a experiência do usuário.",
         "UIBackgroundModes": [
           "audio",
           "fetch",
@@ -27,7 +24,6 @@
       "permissions": [
         "INTERNET",
         "WAKE_LOCK",
-        "RECORD_AUDIO",
         "FOREGROUND_SERVICE",
         "POST_NOTIFICATIONS",
         "android.permission.MODIFY_AUDIO_SETTINGS"
@@ -53,27 +49,15 @@
           "resizeMode": "contain",
           "backgroundColor": "#fd9200"
         }
-      ],
-      [
-        "expo-av",
-        {
-          "microphonePermission": false,
-          "android": {
-            "playInBackground": true,
-            "playThroughEarpieceAndroid": false
-          },
-          "ios": {
-            "allowsRecordingIOS": false,
-            "staysActiveInBackground": true
-          }
-        }
       ]
     ],
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "ecc8d078-eb97-4219-a894-b65a6f72195c"
       }
-
     }
   }
 }
