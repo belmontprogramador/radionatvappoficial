@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import * as Linking from "expo-linking";
 import { router, usePathname } from "expo-router";
-import HomeScreen from "./index";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 
 const NotFoundScreen = () => {
   const url = Linking.useURL();
-  const [isReady, setIsReady] = useState(false); // Estado para garantir que o layout esteja montado
+  const [isReady, setIsReady] = useState(false); 
   const path = usePathname();
   useEffect(() => {
-    // Quando o layout estiver pronto, marque como pronto
     setIsReady(true);
   }, []);
 
@@ -24,11 +22,21 @@ const NotFoundScreen = () => {
   }, [url, router, isReady, path]);
 
   return (
-    // <HomeScreen/>
-    <View>
-      <Text>Not Found</Text>
+    <View style={styles.screen}>
+      <ActivityIndicator size={'large'} color={'#fff'} />
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#2C353E",
+  },
+});
+
 
 export default NotFoundScreen;
